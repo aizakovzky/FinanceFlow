@@ -1,0 +1,124 @@
+'use client'
+
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { DollarSign, Eye, EyeOff, Loader2 } from 'lucide-react'
+
+export default function LoginPage() {
+    const router = useRouter()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
+        setLoading(true)
+
+        try {
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            })
+
+            if (result?.error) {
+                setError('Invalid email or password')
+            } else {
+                router.push('/')
+                router.refresh()
+            }
+        } catch {
+            setError('Something went wrong. Please try again.')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <div className="min-h-dvh flex items-center justify-center bg-background p-4">
+            <div className="w-full max-w-md space-y-8">
+                {/* Logo */}
+                <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-emerald-600 rounded-2xl mb-4 shadow-lg shadow-emerald-600/20">
+                        <DollarSign className="w-7 h-7 text-white" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
+                    <p className="text-muted-foreground text-sm mt-1">Sign in to your FinanceFlow account</p>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    {error && (
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="text-sm font-medium text-foreground block mb-1.5">Email</label>
+                            <Input
+                                type="email"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                autoComplete="email"
+                                className="h-11"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-medium text-foreground block mb-1.5">Password</label>
+                            <div className="relative">
+                                <Input
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    autoComplete="current-password"
+                                    className="h-11 pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Signing in...
+                            </>
+                        ) : (
+                            'Sign in'
+                        )}
+                    </Button>
+                </form>
+
+                <p className="text-center text-sm text-muted-foreground">
+                    Don&apos;t have an account?{' '}
+                    <a href="/register" className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
+                        Create one
+                    </a>
+                </p>
+            </div>
+        </div>
+    )
+}
