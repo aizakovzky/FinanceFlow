@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useAuth } from '@/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DollarSign, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
+    const { login } = useAuth()
     const router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -20,24 +21,15 @@ export default function LoginPage() {
         setError('')
         setLoading(true)
 
-        try {
-            const result = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-            })
+        await new Promise(r => setTimeout(r, 400))
 
-            if (result?.error) {
-                setError('Invalid email or password')
-            } else {
-                router.push('/')
-                router.refresh()
-            }
-        } catch {
-            setError('Something went wrong. Please try again.')
-        } finally {
-            setLoading(false)
+        const result = login(email, password)
+        if (result.success) {
+            router.push('/')
+        } else {
+            setError(result.error || 'Something went wrong')
         }
+        setLoading(false)
     }
 
     return (
@@ -112,12 +104,19 @@ export default function LoginPage() {
                     </Button>
                 </form>
 
-                <p className="text-center text-sm text-muted-foreground">
-                    Don&apos;t have an account?{' '}
-                    <a href="/register" className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
-                        Create one
-                    </a>
-                </p>
+                <div className="space-y-3">
+                    <p className="text-center text-sm text-muted-foreground">
+                        Don&apos;t have an account?{' '}
+                        <a href="/register" className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
+                            Create one
+                        </a>
+                    </p>
+                    <div className="bg-muted/60 rounded-lg p-3 text-center">
+                        <p className="text-xs text-muted-foreground">
+                            <span className="font-medium">Demo account:</span> demo@financeflow.app / demo123
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     )

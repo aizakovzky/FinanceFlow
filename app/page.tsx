@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/use-auth'
 import { FinanceProvider, type Expense } from '@/hooks/use-finances'
 import { useTheme } from '@/hooks/use-theme'
 import Sidebar from '@/components/sidebar'
@@ -78,7 +80,7 @@ function AppShell() {
       {/* Mobile bottom tab bar */}
       <MobileNav currentPage={currentPage} setCurrentPage={setCurrentPage} onQuickAdd={() => { setEditingExpense(null); setQuickAddOpen(true) }} />
 
-      {/* Floating Quick Add button — always visible */}
+      {/* Floating Quick Add button */}
       <button
         onClick={() => { setEditingExpense(null); setQuickAddOpen(true) }}
         className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-30 flex items-center gap-2 rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-700 active:scale-95 transition-all max-md:w-14 max-md:h-14 max-md:justify-center md:px-5 md:py-3"
@@ -126,8 +128,25 @@ function MobileNav({ currentPage, setCurrentPage, onQuickAdd }: { currentPage: P
 }
 
 export default function Home() {
+  const { isAuthenticated, isLoading, user } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/login')
+    }
+  }, [isLoading, isAuthenticated, router])
+
+  if (isLoading || !isAuthenticated || !user) {
+    return (
+      <div className="flex h-dvh items-center justify-center bg-background">
+        <div className="animate-pulse text-muted-foreground text-sm">Loading...</div>
+      </div>
+    )
+  }
+
   return (
-    <FinanceProvider>
+    <FinanceProvider userId={user.id}>
       <AppShell />
     </FinanceProvider>
   )

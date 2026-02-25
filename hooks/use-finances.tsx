@@ -56,8 +56,6 @@ export const CATEGORIES: { value: Category; label: string; color: string }[] = [
   { value: 'other', label: 'Other', color: '#6b7280' },
 ]
 
-// ────────────────── Context ──────────────────
-
 interface FinanceContextType {
   expenses: Expense[]
   budgets: Budget[]
@@ -77,152 +75,122 @@ interface FinanceContextType {
 
 const FinanceContext = createContext<FinanceContextType | null>(null)
 
-export function FinanceProvider({ children }: { children: ReactNode }) {
+const DEFAULT_BUDGETS: Budget[] = [
+  { id: '1', category: 'food', limit: 500 },
+  { id: '2', category: 'transport', limit: 200 },
+  { id: '3', category: 'entertainment', limit: 150 },
+  { id: '4', category: 'utilities', limit: 300 },
+  { id: '5', category: 'shopping', limit: 200 },
+  { id: '6', category: 'healthcare', limit: 100 },
+]
+
+function userKey(userId: string, suffix: string) {
+  return `ff_user_${userId}_${suffix}`
+}
+
+export function FinanceProvider({ children, userId }: { children: ReactNode; userId: string }) {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [budgets, setBudgets] = useState<Budget[]>([])
   const [recurring, setRecurring] = useState<RecurringTransaction[]>([])
   const [currency, setCurrencyState] = useState<CurrencyCode>('USD')
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Load data from API on mount
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [txRes, budgetRes, recurRes, settingsRes] = await Promise.all([
-          fetch('/api/transactions'),
-          fetch('/api/budgets'),
-          fetch('/api/recurring'),
-          fetch('/api/settings'),
-        ])
+    setIsLoaded(false)
+    try {
+      if (typeof window !== 'undefined') {
+        const savedExpenses = localStorage.getItem(userKey(userId, 'expenses'))
+        const savedBudgets = localStorage.getItem(userKey(userId, 'budgets'))
+        const savedRecurring = localStorage.getItem(userKey(userId, 'recurring'))
+        const savedCurrency = localStorage.getItem(userKey(userId, 'currency'))
 
-        if (txRes.ok) {
-          const txData = await txRes.json()
-          setExpenses(txData.map((t: Record<string, unknown>) => ({
-            ...t,
-            date: typeof t.date === 'string' ? t.date.split('T')[0] : t.date,
-          })))
-        }
-        if (budgetRes.ok) setBudgets(await budgetRes.json())
-        if (recurRes.ok) {
-          const recurData = await recurRes.json()
-          setRecurring(recurData.map((r: Record<string, unknown>) => ({
-            ...r,
-            nextDate: typeof r.nextDate === 'string' ? r.nextDate.split('T')[0] : r.nextDate,
-          })))
-        }
-        if (settingsRes.ok) {
-          const s = await settingsRes.json()
-          setCurrencyState(s.currency || 'USD')
-        }
-      } catch (err) {
-        console.error('Failed to load data:', err)
-      } finally {
-        setIsLoaded(true)
+        setExpenses(savedExpenses ? JSON.parse(savedExpenses) : [])
+        setBudgets(savedBudgets ? JSON.parse(savedBudgets) : DEFAULT_BUDGETS)
+        setRecurring(savedRecurring ? JSON.parse(savedRecurring) : [])
+        setCurrencyState((savedCurrency as CurrencyCode) || 'USD')
       }
+    } catch (e) {
+      console.error('Failed to load from localStorage', e)
+    } finally {
+      setIsLoaded(true)
     }
-    loadData()
-  }, [])
+  }, [userId])
+
+  useEffect(() => {
+    if (isLoaded && typeof window !== 'undefined')
+      localStorage.setItem(userKey(userId, 'expenses'), JSON.stringify(expenses))
+  }, [expenses, isLoaded, userId])
+
+  useEffect(() => {
+    if (isLoaded && typeof window !== 'undefined')
+      localStorage.setItem(userKey(userId, 'budgets'), JSON.stringify(budgets))
+  }, [budgets, isLoaded, userId])
+
+  useEffect(() => {
+    if (isLoaded && typeof window !== 'undefined')
+      localStorage.setItem(userKey(userId, 'recurring'), JSON.stringify(recurring))
+  }, [recurring, isLoaded, userId])
+
+  useEffect(() => {
+    if (isLoaded && typeof window !== 'undefined')
+      localStorage.setItem(userKey(userId, 'currency'), currency)
+  }, [currency, isLoaded, userId])
 
   const addExpense = useCallback(async (expense: Omit<Expense, 'id'>) => {
-    const res = await fetch('/api/transactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(expense),
-    })
-    const created = await res.json()
-    const mapped = { ...created, date: created.date?.split('T')[0] || created.date }
-    setExpenses(prev => [...prev, mapped])
-    return created.id as string
+    const id = crypto.randomUUID()
+    setExpenses(prev => [...prev, { ...expense, id }])
+    return id
   }, [])
 
   const importExpenses = useCallback(async (items: Omit<Expense, 'id'>[]) => {
-    const results = await Promise.all(
-      items.map(item =>
-        fetch('/api/transactions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(item),
-        }).then(res => res.json())
-      )
-    )
-    const mapped = results.map(t => ({ ...t, date: t.date?.split('T')[0] || t.date }))
-    setExpenses(prev => [...prev, ...mapped])
+    const newItems = items.map(item => ({ ...item, id: crypto.randomUUID() }))
+    setExpenses(prev => [...prev, ...newItems])
   }, [])
 
   const deleteExpense = useCallback((id: string) => {
     setExpenses(prev => prev.filter(e => e.id !== id))
-    fetch(`/api/transactions/${id}`, { method: 'DELETE' }).catch(console.error)
   }, [])
 
   const updateExpense = useCallback(async (id: string, updates: Partial<Omit<Expense, 'id'>>) => {
     setExpenses(prev => prev.map(e => e.id === id ? { ...e, ...updates } : e))
-    await fetch(`/api/transactions/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates),
-    }).catch(console.error)
   }, [])
 
   const updateBudget = useCallback((id: string, updates: Partial<Budget>) => {
     setBudgets(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b))
-    fetch('/api/budgets', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, ...updates }),
-    }).catch(console.error)
   }, [])
 
   const addRecurring = useCallback(async (t: Omit<RecurringTransaction, 'id'>) => {
-    const res = await fetch('/api/recurring', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(t),
-    })
-    const created = await res.json()
-    const mapped = { ...created, nextDate: created.nextDate?.split('T')[0] || created.nextDate }
-    setRecurring(prev => [...prev, mapped])
-    return created.id as string
+    const id = crypto.randomUUID()
+    setRecurring(prev => [...prev, { ...t, id }])
+    return id
   }, [])
 
   const deleteRecurring = useCallback((id: string) => {
     setRecurring(prev => prev.filter(r => r.id !== id))
-    fetch(`/api/recurring/${id}`, { method: 'DELETE' }).catch(console.error)
   }, [])
 
   const setCurrency = useCallback((c: CurrencyCode) => {
     setCurrencyState(c)
-    fetch('/api/settings', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ currency: c }),
-    }).catch(console.error)
   }, [])
 
   const clearAllData = useCallback(() => {
-    // Delete all transactions and recurring via API
-    expenses.forEach(e => fetch(`/api/transactions/${e.id}`, { method: 'DELETE' }).catch(console.error))
-    recurring.forEach(r => fetch(`/api/recurring/${r.id}`, { method: 'DELETE' }).catch(console.error))
     setExpenses([])
     setRecurring([])
+    setBudgets(DEFAULT_BUDGETS)
     setCurrencyState('USD')
-  }, [expenses, recurring])
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(userKey(userId, 'expenses'))
+      localStorage.removeItem(userKey(userId, 'recurring'))
+      localStorage.removeItem(userKey(userId, 'budgets'))
+      localStorage.removeItem(userKey(userId, 'currency'))
+    }
+  }, [userId])
 
   return (
     <FinanceContext value={{
-      expenses,
-      budgets,
-      recurring,
-      currency,
-      isLoaded,
-      addExpense,
-      importExpenses,
-      deleteExpense,
-      updateExpense,
-      updateBudget,
-      addRecurring,
-      deleteRecurring,
-      setCurrency,
-      clearAllData,
+      expenses, budgets, recurring, currency, isLoaded,
+      addExpense, importExpenses, deleteExpense, updateExpense,
+      updateBudget, addRecurring, deleteRecurring, setCurrency, clearAllData,
     }}>
       {children}
     </FinanceContext>
@@ -276,21 +244,13 @@ export function formatCurrency(amount: number, currency: CurrencyCode = 'USD') {
 
 function getCurrencyLocale(currency: CurrencyCode): string {
   const localeMap: Record<CurrencyCode, string> = {
-    USD: 'en-US',
-    EUR: 'de-DE',
-    GBP: 'en-GB',
-    JPY: 'ja-JP',
-    AUD: 'en-AU',
-    CAD: 'en-CA',
-    CHF: 'de-CH',
-    CNY: 'zh-CN',
-    INR: 'en-IN',
-    BRL: 'pt-BR',
+    USD: 'en-US', EUR: 'de-DE', GBP: 'en-GB', JPY: 'ja-JP',
+    AUD: 'en-AU', CAD: 'en-CA', CHF: 'de-CH', CNY: 'zh-CN',
+    INR: 'en-IN', BRL: 'pt-BR',
   }
   return localeMap[currency] || 'en-US'
 }
 
-/** Hook that returns a formatCurrency bound to the user's chosen currency */
 export function useFormatCurrency() {
   const { currency } = useFinances()
   return useCallback((amount: number) => formatCurrency(amount, currency), [currency])

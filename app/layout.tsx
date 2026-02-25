@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { SessionProvider } from 'next-auth/react'
+import { AuthProvider } from '@/hooks/use-auth'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -38,11 +38,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <SessionProvider>
+        <AuthProvider>
           {children}
-        </SessionProvider>
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
   )
 }
+

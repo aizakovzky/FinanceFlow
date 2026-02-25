@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useAuth } from '@/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DollarSign, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function RegisterPage() {
+    const { register } = useAuth()
     const router = useRouter()
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -22,49 +23,20 @@ export default function RegisterPage() {
         setError('')
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match')
-            return
-        }
-
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters')
+            setError('Passwords do not match.')
             return
         }
 
         setLoading(true)
+        await new Promise(r => setTimeout(r, 400))
 
-        try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password }),
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                setError(data.error || 'Registration failed')
-                return
-            }
-
-            // Auto-sign in after registration
-            const signInResult = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-            })
-
-            if (signInResult?.error) {
-                setError('Account created but sign-in failed. Please go to login.')
-            } else {
-                router.push('/')
-                router.refresh()
-            }
-        } catch {
-            setError('Something went wrong. Please try again.')
-        } finally {
-            setLoading(false)
+        const result = register(name, email, password)
+        if (result.success) {
+            router.push('/')
+        } else {
+            setError(result.error || 'Something went wrong')
         }
+        setLoading(false)
     }
 
     return (
@@ -95,7 +67,7 @@ export default function RegisterPage() {
                                 placeholder="Your name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                autoComplete="name"
+                                required
                                 className="h-11"
                             />
                         </div>
@@ -118,11 +90,11 @@ export default function RegisterPage() {
                             <div className="relative">
                                 <Input
                                     type={showPassword ? 'text' : 'password'}
-                                    placeholder="At least 6 characters"
+                                    placeholder="Min. 6 characters"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    autoComplete="new-password"
+                                    minLength={6}
                                     className="h-11 pr-10"
                                 />
                                 <button
@@ -139,11 +111,10 @@ export default function RegisterPage() {
                             <label className="text-sm font-medium text-foreground block mb-1.5">Confirm Password</label>
                             <Input
                                 type={showPassword ? 'text' : 'password'}
-                                placeholder="Confirm your password"
+                                placeholder="Re-enter password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
-                                autoComplete="new-password"
                                 className="h-11"
                             />
                         </div>

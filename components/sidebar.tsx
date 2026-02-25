@@ -1,6 +1,6 @@
 'use client'
 
-import { signOut, useSession } from 'next-auth/react'
+import { useAuth } from '@/hooks/use-auth'
 import { BarChart3, DollarSign, PieChart, Repeat, Settings, TrendingDown, Moon, Sun, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Page } from '@/app/page'
@@ -23,7 +23,7 @@ const menuItems: { id: Page; label: string; icon: typeof BarChart3 }[] = [
 ]
 
 export default function Sidebar({ currentPage, setCurrentPage, theme, onToggleTheme, mounted }: SidebarProps) {
-  const { data: session } = useSession()
+  const { user, logout } = useAuth()
 
   return (
     <aside className="hidden md:flex flex-col w-60 bg-card border-r border-border h-dvh shrink-0">
@@ -62,10 +62,10 @@ export default function Sidebar({ currentPage, setCurrentPage, theme, onToggleTh
 
       {/* User info + Theme toggle + footer */}
       <div className="px-3 pb-4 space-y-3 border-t border-border pt-4">
-        {session?.user && (
+        {user && (
           <div className="px-3 py-2">
-            <p className="text-sm font-medium text-foreground truncate">{session.user.name || session.user.email}</p>
-            <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+            <p className="text-sm font-medium text-foreground truncate">{user.name || user.email}</p>
+            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
           </div>
         )}
         {mounted && (
@@ -78,7 +78,7 @@ export default function Sidebar({ currentPage, setCurrentPage, theme, onToggleTh
           </button>
         )}
         <button
-          onClick={() => signOut({ callbackUrl: '/login' })}
+          onClick={logout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-destructive transition-colors"
         >
           <LogOut className="w-4.5 h-4.5" />

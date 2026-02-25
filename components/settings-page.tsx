@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { signOut } from 'next-auth/react'
+import { useAuth } from '@/hooks/use-auth'
 import { useFinances, useFormatCurrency, CURRENCIES, type CurrencyCode, type Expense } from '@/hooks/use-finances'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, Download, Upload, Trash2, Shield, HardDrive, Globe, LogOut } from 'lucide-react'
 
 export default function SettingsPage() {
+  const { logout } = useAuth()
   const { expenses, budgets, recurring, currency, setCurrency, clearAllData, importExpenses } = useFinances()
   const fmt = useFormatCurrency()
   const [showConfirmation, setShowConfirmation] = useState(false)
