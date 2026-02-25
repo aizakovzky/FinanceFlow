@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,14 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    // Force light mode on auth pages
+    useEffect(() => {
+        const html = document.documentElement
+        const wasDark = html.classList.contains('dark')
+        if (wasDark) html.classList.remove('dark')
+        return () => { if (wasDark) html.classList.add('dark') }
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
