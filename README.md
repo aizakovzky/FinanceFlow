@@ -1,24 +1,46 @@
-# FinanceFlow — User Manual
+# FinanceFlow — User Manual (Demo Version)
+
+> **This is the browser-only demo.** All data is stored in your browser's localStorage — no database, no server, no sign-up required. Your data persists until you clear your browser data.
+
+---
 
 ## Getting Started
 
-### Creating an Account
-1. Open the app in your browser at `http://localhost:3000`
-2. Click **Create one** on the login page
-3. Fill in your name, email, and password (min. 6 characters)
-4. Click **Create account** — you'll be signed in automatically
+### Demo Account
+A demo account is created automatically on first visit:
+- **Email:** `demo@financeflow.app`
+- **Password:** `demo123`
+
+It comes pre-loaded with 15 sample transactions, 6 budget categories, and 2 recurring items so you can explore the app immediately.
+
+### Creating Your Own Account
+1. Click **Create one** on the login page
+2. Fill in your name, email, and password (min. 6 characters)
+3. Click **Create account** — you'll be signed in automatically
+
+Each account's data is fully isolated in your browser.
 
 ### Signing In
 Enter your email and password on the login page and click **Sign in**.
 
 ---
 
+## Dashboard
+
+Your home screen showing:
+- **Monthly Spending** — total amount and transaction count for the current month
+- **Budget Status** — top 3 budget categories with progress bars
+- **Quick Actions** — jump to Analytics
+- **Recent Transactions** — last 5 expenses this month
+- **Spending by Category** — colored bar chart of this month's distribution
+
+---
+
 ## Adding Transactions
 
-There are two ways to add a transaction:
-
-- **Floating button**: Click the green **+ Add Transaction** button (bottom-right on desktop, bottom-right circle on mobile)
-- **Keyboard shortcut**: Press `C` anywhere in the app, or `Ctrl+K` / `Cmd+K`
+Two ways to add a transaction:
+- **Floating button**: Click the green **+ Add Transaction** button (bottom-right)
+- **Keyboard shortcut**: Press `C` anywhere, or `Ctrl+K` / `Cmd+K`
 
 ### Smart Input (Natural Language)
 Type a sentence like *"Spent $25 on lunch yesterday"* and the form auto-fills:
@@ -26,113 +48,106 @@ Type a sentence like *"Spent $25 on lunch yesterday"* and the form auto-fills:
 - **Category** is guessed from keywords (e.g. "lunch" → Food & Dining)
 - **Date** adjusts for "yesterday" or "last week"
 
-You can also fill in or override the fields manually below the text area.
-
 ### Manual Fields
 | Field | Description |
 |---|---|
 | **Amount** | How much was spent |
 | **Date** | When it happened |
-| **Category** | Select from: Food & Dining, Transport, Entertainment, Utilities, Shopping, Healthcare, Other |
+| **Category** | Food & Dining, Transport, Entertainment, Utilities, Shopping, Healthcare, Other |
 | **Description** | Short note about the transaction |
 
-Click **Add Transaction** or press `Enter` to save.
+Click **Add Transaction** to save.
 
 ---
 
 ## Editing Transactions
 
 1. Go to the **Expenses** page
-2. Find the transaction you want to edit
-3. Click the **pencil icon** (✏️) next to the delete button
-4. The modal opens pre-filled with the existing data
-5. Modify any fields, then click **Update Transaction**
+2. Click the **pencil icon** (✏️) next to a transaction
+3. Modify any fields in the modal
+4. Click **Update Transaction**
 
 ---
 
 ## Expenses Page
 
-Shows all your transactions in a filterable list (newest first).
+All transactions in a filterable list (newest first).
 
-- **Filter by category** using the buttons at the top (All, Food & Dining, Transport, etc.)
-- **Edit** a transaction with the pencil icon
-- **Delete** a transaction with the trash icon (requires a second click to confirm)
-- The header shows the total count and sum for the current filter
+- **Filter by category** using the buttons at the top
+- **Edit** with the pencil icon
+- **Delete** with the trash icon (click twice to confirm)
+- Header shows total count and sum for the active filter
 
 ---
 
 ## Budgets Page
 
-Displays a card for each spending category with:
-- **Progress bar** — how much you've spent vs. your monthly limit
-- **Percentage** — visual indicator (green = on track, amber = close, red = over budget)
-- **Edit** button to change the budget limit
+A card for each spending category showing:
+- **Progress bar** — spent vs. monthly limit
+- **Color coding** — green (on track), amber (>80%), red (over budget)
+- **Edit** — click to change the limit
 
 ### JPY Scaling
-If your currency is set to Japanese Yen (¥) and budgets are still at the default ¥500, a banner appears offering to **Scale Budgets for ¥** with one click. This sets practical defaults like:
-- Food & Dining: ¥50,000
-- Transport: ¥15,000
-- Entertainment: ¥20,000
-- Utilities: ¥25,000
-- Shopping: ¥30,000
-- Healthcare: ¥10,000
+If currency is set to ¥ and budgets are still at the default $500, a banner offers one-click scaling to Japanese Yen defaults (e.g. Food: ¥50,000).
 
 ---
 
 ## Analytics Page
 
-Provides visual insights into your spending:
+Visual insights into your spending:
 
 | Chart | What it shows |
 |---|---|
-| **Spending by Category** | Donut chart of this month's spending breakdown |
-| **Monthly Trend** | Line chart of total spending over the last 6 months |
-| **Average by Category** | Bar chart showing average transaction size per category |
+| **Spending by Category** | Donut chart of this month's breakdown |
+| **Monthly Trend** | Line chart of spending over the last 6 months |
+| **Average by Category** | Bar chart of average transaction size |
 
-Hover over any chart element to see a tooltip with the exact value.
+Hover over chart elements for tooltips with exact values.
 
 ### Proactive Insights
-The app automatically generates alerts:
-- ⚠️ **Warning** if you've exceeded a budget or are projected to
-- ℹ️ **Info** if spending is up compared to last month
-- ✅ **Success** if spending has decreased
+Automatic alerts:
+- ⚠️ **Warning** — budget exceeded or projected to exceed
+- ℹ️ **Info** — spending up vs. last month
+- ✅ **Success** — spending has decreased
 
 ---
 
 ## Recurring Transactions
 
-Set up transactions that repeat automatically.
-
-1. Click **Add Recurring** on the Recurring page
-2. Choose **Type** (Expense or Income), **Frequency** (Daily, Weekly, Monthly, Yearly)
+Set up repeating entries:
+1. Click **Add Recurring**
+2. Choose Type (Expense/Income), Frequency (Daily/Weekly/Monthly/Yearly)
 3. Fill in amount, category, description, and next date
 4. Click **Add**
 
-Each recurring entry shows its next scheduled date and frequency. The page also shows the **total monthly impact** of all recurring items.
+The page shows the **total monthly impact** of all recurring items.
 
 ---
 
-## Settings Page
+## Settings
 
 ### Currency
-Choose from 10 currencies: USD, EUR, GBP, JPY, AUD, CAD, CHF, CNY, INR, BRL. A preview shows how amounts are formatted in your chosen locale.
+Choose from 10 currencies: USD, EUR, GBP, JPY, AUD, CAD, CHF, CNY, INR, BRL. A live preview shows formatting in your chosen locale.
 
 ### Data Management
 | Action | Description |
 |---|---|
-| **Export CSV** | Download all transactions as a spreadsheet-compatible CSV file |
-| **Export JSON** | Full backup including transactions, budgets, recurring items, and currency |
-| **Import CSV** | Upload a CSV file to bulk-import transactions |
+| **Export CSV** | Download transactions as a spreadsheet file |
+| **Export JSON** | Full backup (transactions, budgets, recurring, currency) |
+| **Import CSV** | Bulk-import transactions from a CSV file |
 
 ### Account
-- **Sign Out** — returns you to the login page
-- **Clear All Data** — permanently deletes all transactions and recurring items (requires confirmation)
+- **Sign Out** — returns to the login page
+- **Clear All Data** — permanently deletes all transactions (requires confirmation)
+
+### Privacy
+All data stays in your browser. Nothing is sent to any server.
 
 ---
 
 ## Dark Mode
 
-Toggle between light and dark themes using the **theme button** in the sidebar (shows "Dark Mode" or "Light Mode"). The setting persists across sessions.
+Toggle light/dark themes using the **theme button** in the sidebar. The setting persists across sessions. Login and registration pages always display in light mode.
 
 ---
 
@@ -142,15 +157,15 @@ Toggle between light and dark themes using the **theme button** in the sidebar (
 |---|---|
 | `C` | Open Add Transaction modal |
 | `Ctrl+K` / `Cmd+K` | Open Add Transaction modal |
-| `Enter` | Submit the transaction form |
-| `Escape` | Close any open modal or dropdown |
+| `Enter` | Submit the form |
+| `Escape` | Close modals |
 
 ---
 
 ## Navigation
 
 ### Desktop
-Use the sidebar on the left: Dashboard, Expenses, Budgets, Analytics, Recurring, Settings.
+Sidebar on the left: Dashboard, Expenses, Budgets, Analytics, Recurring, Settings.
 
 ### Mobile
-Use the bottom tab bar: Home, Expenses, Analytics, Budgets, Settings. The green floating button is always available for quick adds.
+Bottom tab bar: Home, Expenses, Analytics, Budgets, Settings. The floating green button is always available for quick adds.
