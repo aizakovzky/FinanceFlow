@@ -72,7 +72,8 @@ export default function RecurringPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">Recurring</h1>
-          <p className="text-muted-foreground text-sm mt-1">Monthly impact: {fmt(totalMonthly)}</p>
+          <p className="text-muted-foreground text-sm mt-1">Manage your automated bills and subscription cycles.</p>
+          <p className="text-muted-foreground text-sm mt-0.5">Monthly impact: {fmt(totalMonthly)}</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
           <Plus className="w-4 h-4 mr-2" /> Add Recurring

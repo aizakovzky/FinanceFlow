@@ -56,7 +56,7 @@ export default function RegisterPage() {
                         <DollarSign className="w-7 h-7 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Create your account</h1>
-                    <p className="text-muted-foreground text-sm mt-1">Start tracking your finances with FinanceFlow</p>
+                    <p className="text-muted-foreground text-sm mt-1">Finance Flow: Streamline your savings.</p>
                 </div>
 
                 {/* Form */}

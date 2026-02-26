@@ -83,7 +83,7 @@ export default function SettingsPage() {
     <div className="p-6 md:p-8 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">Settings</h1>
-        <p className="text-muted-foreground text-sm mt-1">Manage your preferences and data</p>
+        <p className="text-muted-foreground text-sm mt-1">Configure your currency, export data, and manage account security.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

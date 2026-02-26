@@ -105,7 +105,7 @@ export default function AnalyticsPage() {
     <div className="p-6 md:p-8 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">Analytics</h1>
-        <p className="text-muted-foreground text-sm mt-1">Insights into your spending patterns</p>
+        <p className="text-muted-foreground text-sm mt-1">Visualize your spending habits through interactive charts.</p>
       </div>
 
       {/* Proactive Insights */}
@@ -122,10 +122,10 @@ export default function AnalyticsPage() {
               <div
                 key={i}
                 className={`flex items-start gap-2.5 text-sm px-3 py-2.5 rounded-lg ${insight.type === 'warning'
-                    ? 'bg-red-500/10 text-red-700 dark:text-red-400'
-                    : insight.type === 'success'
-                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-                      : 'bg-muted text-muted-foreground'
+                  ? 'bg-red-500/10 text-red-700 dark:text-red-400'
+                  : insight.type === 'success'
+                    ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                    : 'bg-muted text-muted-foreground'
                   }`}
               >
                 {insight.type === 'warning' && <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />}

@@ -49,7 +49,7 @@ export default function LoginPage() {
                         <DollarSign className="w-7 h-7 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
-                    <p className="text-muted-foreground text-sm mt-1">Sign in to your FinanceFlow account</p>
+                    <p className="text-muted-foreground text-sm mt-1">Finance Flow: Streamline your savings.</p>
                 </div>
 
                 {/* Form */}

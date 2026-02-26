@@ -66,7 +66,7 @@ export default function BudgetsPage() {
     <div className="p-6 md:p-8 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">Budgets</h1>
-        <p className="text-muted-foreground text-sm mt-1">Manage your monthly budget limits</p>
+        <p className="text-muted-foreground text-sm mt-1">Set monthly targets and monitor your remaining spend.</p>
       </div>
 
       {/* JPY scaling banner */}

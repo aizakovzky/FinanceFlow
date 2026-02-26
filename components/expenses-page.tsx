@@ -44,7 +44,8 @@ export default function ExpensesPage({ onEditExpense }: ExpensesPageProps) {
     <div className="p-6 md:p-8 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">Expenses</h1>
-        <p className="text-muted-foreground text-sm mt-1">
+        <p className="text-muted-foreground text-sm mt-1">Track and categorize every transaction in your history.</p>
+        <p className="text-muted-foreground text-sm mt-0.5">
           {filtered.length} transaction{filtered.length !== 1 ? 's' : ''} &middot; {fmt(filtered.reduce((s, e) => s + e.amount, 0))}
         </p>
       </div>

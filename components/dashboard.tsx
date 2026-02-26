@@ -46,7 +46,8 @@ export default function Dashboard({ setCurrentPage }: DashboardProps) {
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground text-balance">Dashboard</h1>
-          <p className="text-muted-foreground text-sm mt-1">{formatDate(now)}</p>
+          <p className="text-emerald-600 dark:text-emerald-400 text-sm font-medium mt-1">Finance Flow: Streamline your savings.</p>
+          <p className="text-muted-foreground text-sm mt-0.5">A high-level summary of your net balance and recent activity.</p>
         </div>
       </div>
 
